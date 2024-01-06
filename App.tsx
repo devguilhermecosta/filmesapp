@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text } from 'react-native';
-import { FilmeProps } from './src/interfaces';
+import { View, FlatList, StyleSheet } from 'react-native';
+import { FilmProps } from './src/interfaces';
 import api from './src/services/api';
+import FilmItem from './src/components/Film';
 
 export default function App(): React.JSX.Element {
-  const [filmes, setFilmes] = useState<FilmeProps[]>([]);
+  const [films, setFilms] = useState<FilmProps[]>([]);
 
   useEffect(() => {
     async function getFilmes() {
       await api.get('r-api/?api=filmes')
-      .then((r) => setFilmes(r.data));
+      .then((r) => setFilms(r.data));
     }
 
     getFilmes();
@@ -17,8 +18,20 @@ export default function App(): React.JSX.Element {
   }, []);
 
   return (
-    <View>
-      <Text>teste</Text>
+    <View style={styles.container}>
+      <FlatList
+        data={films}
+        renderItem={({item}) => <FilmItem data={item}/>}
+        keyExtractor={item => item.id}
+        showsVerticalScrollIndicator={false}
+      />
     </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    margin: 10,
+  }
+})
